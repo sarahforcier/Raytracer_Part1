@@ -8,7 +8,36 @@ static const int CUB_VERT_COUNT = 24;
 Intersection Cube::GetIntersection(Ray r)
 {
     //TODO
-    return Intersection();
+    Intersection inter = Intersection();
+    Ray tr = r.GetTransformedCopy(transform.invT());
+    float tnear = -std::numeric_limits<float>::infinity();
+    float tfar = std::numeric_limits<float>::infinity();
+    float N = -1;
+    for (int i = 0; i < 3; i++) {
+        float xd = tr.direction[i];
+        float x0 = tr.origin[i];
+        float t0 = (-0.5 - x0)/xd;
+        float t1 = (0.5 - x0)/xd;
+        if (t0 > t1) {
+            float temp = t0;
+            t0 = t1; t1 = temp;
+        }
+        if (t0 < tnear) {
+            tnear = t0;
+            N = i;
+        }
+        if (t1 < tfar) tfar = t1;
+    }
+    if (tnear <= tfar) {
+        inter.point = r.origin + tnear * r.direction;
+        glm::vec4 n = glm::vec4(0);
+        n[N] = 1;
+        inter.normal =glm::vec3(transform.invTransT()*n);
+        inter.t = tnear;
+        inter.object_hit = this;
+
+    }
+    return inter;
 }
 
 //These are functions that are only defined in this cpp file. They're used for organizational purposes

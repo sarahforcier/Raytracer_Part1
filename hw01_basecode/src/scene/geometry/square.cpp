@@ -3,7 +3,18 @@
 Intersection SquarePlane::GetIntersection(Ray r)
 {
     //TODO
-    return Intersection();
+    Intersection inter = Intersection();
+    Ray tr = r.GetTransformedCopy(transform.invT());
+    glm::vec3 N = glm::vec3(0,0,1);
+    float t = glm::dot(N, -tr.origin)/glm::dot(N, tr.direction);
+    glm::vec3 tp = tr.origin + t * tr.direction;
+    if (tp.r > -0.5 && tp.r < 0.5 && tp.g > -0.5 && tp.g < 0.5) {
+        inter.point = r.origin + t * r.direction;
+        inter.normal = N;
+        inter.t = t;
+        inter.object_hit = this;
+    }
+    return inter;
 }
 
 void SquarePlane::create()

@@ -9,8 +9,21 @@ static const int SPH_VERT_COUNT = 382;
 
 Intersection Sphere::GetIntersection(Ray r)
 {
-    //TODO
-    return Intersection();
+    Intersection inter = Intersection();
+    Ray tr = r.GetTransformedCopy(transform.invT());
+    float xd = tr.direction.r; float yd = tr.direction.g; float zd = tr.direction.b;
+    float x0 = tr.origin.r; float y0 = tr.origin.g; float z0 = tr.origin.b;
+    float A = xd * xd + yd * yd + zd * zd;
+    float B = 2 * (xd * x0 + yd * y0 + zd * z0);
+    float C = x0 * x0 + y0 * y0 + z0 * z0 - 0.5 * 0.5;
+    if ((B*B - 4*A*C)>=0 && A != 0) {
+        float t = (-B - sqrt(B*B - 4*A*C))/(2 * A);
+        inter.point = r.origin + t * r.direction;
+        inter.normal = inter.point - transform.position();
+        inter.t = t;
+        inter.object_hit = this;
+    }
+    return inter;
 }
 
 // These are functions that are only defined in this cpp file. They're used for organizational purposes

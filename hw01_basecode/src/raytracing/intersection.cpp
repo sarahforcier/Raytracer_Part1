@@ -16,5 +16,25 @@ IntersectionEngine::IntersectionEngine()
 Intersection IntersectionEngine::GetIntersection(Ray r)
 {
     //TODO
-    return Intersection();
+    QList<Intersection> list = GetAllIntersections(r);
+    Intersection inter = Intersection();
+    inter.t = std::numeric_limits<float>::infinity();
+    for (auto i : list) {
+        if (i.t < inter.t) {
+            inter = i;
+        }
+    }
+    if (inter.object_hit == nullptr) inter.t = -1;
+    return inter;
+}
+
+QList<Intersection> IntersectionEngine::GetAllIntersections(Ray r) {
+    QList<Intersection> list = QList<Intersection>();
+    for (auto obj : scene->objects) {
+        Intersection inter = obj->GetIntersection(r);
+        if (inter.t > 0) {
+            list.append(inter);
+        }
+    }
+    return list;
 }

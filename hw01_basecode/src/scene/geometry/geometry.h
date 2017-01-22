@@ -11,7 +11,7 @@ class Intersection;//Forward declaration because Intersection and Geometry cross
 class Material;
 
 //Geometry is an abstract class since it contains a pure virtual function (i.e. a virtual function that is set to 0)
-class Geometry : public Drawable, Intersectable
+class Geometry : public Drawable, public Intersectable
 {
 public:
     Geometry():

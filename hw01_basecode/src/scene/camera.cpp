@@ -130,7 +130,9 @@ Ray Camera::Raycast(float x, float y)
     //TODO
     // Takes in the X and Y coordinates of a pixel
     // and returns a ray generated from them.
-    return Ray(glm::vec3(), glm::vec3());
+    float sx = (2 * x/width) - 1;
+    float sy = 1 - (2 * y/height);
+    return Camera::RaycastNDC(sx, sy);
 }
 
 Ray Camera::RaycastNDC(float ndc_x, float ndc_y)
@@ -138,7 +140,11 @@ Ray Camera::RaycastNDC(float ndc_x, float ndc_y)
     //TODO
     // Takes in an X and Y coordinate in the range [-1, 1]
     // and returns a ray generated from them.
-    return Ray(glm::vec3(), glm::vec3());
+    glm::mat4 vp = Camera::getViewProj();
+    glm::vec4 p = glm::inverse(vp) * (glm::vec4(ndc_x, ndc_y, 1, 1)*far_clip);
+    glm::vec4 ray_origin = glm::vec4(eye, 1.0);
+    glm::vec4 ray_direction = glm::normalize(p - ray_origin);
+    return Ray(ray_origin, ray_direction);
 }
 
 void Camera::create()

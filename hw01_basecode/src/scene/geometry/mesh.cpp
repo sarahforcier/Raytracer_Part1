@@ -51,13 +51,41 @@ glm::vec4 Triangle::GetNormal(const glm::vec4 &position)
 Intersection Triangle::GetIntersection(Ray r)
 {
     //TODO
-    return Intersection();
+    Intersection inter = Intersection();
+    Ray tr = r.GetTransformedCopy(transform.invT());
+    glm::vec3 p1 = points[0]; glm::vec3 p2 = points[1]; glm::vec3 p3 = points[2];
+    float t = glm::dot(plane_normal, p1 - tr.origin) / glm::dot(plane_normal, tr.direction);
+    glm::vec3 p = tr.origin + t * tr.direction;
+    float S = abs(glm::length(glm::cross(p1-p2, p3-p2))/2);
+    float s1 = abs(glm::length(glm::cross(p2-p, p3-p))/2)/S;
+    float s2 = abs(glm::length(glm::cross(p3-p, p1-p))/2)/S;
+    float s3 = abs(glm::length(glm::cross(p1-p, p2-p))/2)/S;
+    bool c1 = (s1>=0 && s1<=1); bool c2 = (s2>=0 && s2<=1); bool c3 = (s3>=0 && s3<=1);
+    if (c1 && c2 && c3 && (s1 + s2 + s3 == 1)) {
+        inter.object_hit = this;
+        inter.point = r.origin + t * r.direction;
+        inter.normal = glm::vec3(transform.invTransT() * GetNormal(glm::vec4(inter.point, 0.0)));
+        inter.t = t;
+    }
+    return inter;
 }
 
 Intersection Mesh::GetIntersection(Ray r)
 {
     //TODO
-    return Intersection();
+    Intersection inter = Intersection(); inter.t = std::numeric_limits<float>::infinity();
+    Ray tr = r.GetTransformedCopy(transform.invT());
+    for (auto tri : faces) {
+        Intersection i = tri->GetIntersection(tr);
+        if (i.object_hit != nullptr && i.t < inter.t) {
+            inter.object_hit = i.object_hit;
+            inter.t = i.t;
+            inter.point = r.origin + inter.t * r.direction;
+            inter.normal =glm::vec3((transform.invTransT()*glm::vec4(i.normal,0.0)));
+        }
+    }
+    if (inter.object_hit == nullptr) inter.t = -1;
+    return inter;
 }
 
 void Mesh::SetMaterial(Material *m)
