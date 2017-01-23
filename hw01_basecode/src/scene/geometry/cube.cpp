@@ -12,30 +12,29 @@ Intersection Cube::GetIntersection(Ray r)
     Ray tr = r.GetTransformedCopy(transform.invT());
     float tnear = -std::numeric_limits<float>::infinity();
     float tfar = std::numeric_limits<float>::infinity();
-    float N = -1;
     for (int i = 0; i < 3; i++) {
         float xd = tr.direction[i];
         float x0 = tr.origin[i];
-        float t0 = (-0.5 - x0)/xd;
-        float t1 = (0.5 - x0)/xd;
+        float t0 = (-0.5f - x0)/xd;
+        float t1 = (0.5f - x0)/xd;
         if (t0 > t1) {
             float temp = t0;
             t0 = t1; t1 = temp;
         }
-        if (t0 < tnear) {
-            tnear = t0;
-            N = i;
-        }
+        if (t0 > tnear) tnear = t0;
         if (t1 < tfar) tfar = t1;
     }
-    if (tnear <= tfar) {
+    if (tnear > 0.f && tnear <= tfar) {
         inter.point = r.origin + tnear * r.direction;
-        glm::vec4 n = glm::vec4(0);
-        n[N] = 1;
-        inter.normal =glm::vec3(transform.invTransT()*n);
+        glm::vec4 n = glm::vec4(0.f);
+        glm::vec3 p = tr.origin + tnear * tr.direction;
+        float x = fabs(p[0]); float y = fabs(p[1]); float z = fabs(p[2]);
+        if (x > y && x > z) n[0] = p[0]/0.5f;
+        else if (y > z) n[1] = p[1]/0.5f;
+        else n[2] = p[2]/0.5f;
+        inter.normal = glm::normalize((glm::vec3(transform.invTransT() * n)));
         inter.t = tnear;
         inter.object_hit = this;
-
     }
     return inter;
 }

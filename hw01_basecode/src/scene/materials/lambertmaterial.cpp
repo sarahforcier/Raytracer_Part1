@@ -8,5 +8,6 @@ LambertMaterial::LambertMaterial(const glm::vec3 &color):Material(color)
 
 glm::vec3 LambertMaterial::EvaluateReflectedEnergy(const Intersection &isx, const glm::vec3 &outgoing_ray, const glm::vec3 &incoming_ray)
 {
-    return glm::vec3();
+    glm::vec3 N = isx.normal;
+    return glm::dot(N, incoming_ray) * base_color;
 }

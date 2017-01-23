@@ -18,6 +18,6 @@ Ray Ray::GetTransformedCopy(const glm::mat4 &T) const
 {
     //TODO: Implement this correctly!
 
-    Ray t_ray = Ray(T*glm::vec4(origin, 1.0), T*glm::vec4(direction, 1.0));
+    Ray t_ray = Ray(T*glm::vec4(origin, 1.0), T*glm::vec4(direction, 0.0));
     return t_ray;
 }

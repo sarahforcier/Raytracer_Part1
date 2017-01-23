@@ -1,4 +1,5 @@
 #include <raytracing/intersection.h>
+#include <iostream>
 
 Intersection::Intersection():
     point(glm::vec3(0)),
@@ -32,6 +33,7 @@ QList<Intersection> IntersectionEngine::GetAllIntersections(Ray r) {
     QList<Intersection> list = QList<Intersection>();
     for (auto obj : scene->objects) {
         Intersection inter = obj->GetIntersection(r);
+
         if (inter.t > 0) {
             list.append(inter);
         }

@@ -11,15 +11,18 @@ Intersection Sphere::GetIntersection(Ray r)
 {
     Intersection inter = Intersection();
     Ray tr = r.GetTransformedCopy(transform.invT());
-    float xd = tr.direction.r; float yd = tr.direction.g; float zd = tr.direction.b;
-    float x0 = tr.origin.r; float y0 = tr.origin.g; float z0 = tr.origin.b;
+    float xd = tr.direction.x; float yd = tr.direction.y; float zd = tr.direction.z;
+    float x0 = tr.origin.x; float y0 = tr.origin.y; float z0 = tr.origin.z;
     float A = xd * xd + yd * yd + zd * zd;
     float B = 2 * (xd * x0 + yd * y0 + zd * z0);
     float C = x0 * x0 + y0 * y0 + z0 * z0 - 0.5 * 0.5;
     if ((B*B - 4*A*C)>=0 && A != 0) {
         float t = (-B - sqrt(B*B - 4*A*C))/(2 * A);
+        if (t < 0) t = (-B + sqrt(B*B - 4*A*C))/(2 * A);
+        if (t < 0) return inter;
         inter.point = r.origin + t * r.direction;
-        inter.normal = inter.point - transform.position();
+        glm::vec3 N = tr.origin + t * tr.direction;
+        inter.normal = glm::normalize((glm::vec3(transform.invTransT() * glm::vec4(N,0.f))));
         inter.t = t;
         inter.object_hit = this;
     }

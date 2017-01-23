@@ -210,9 +210,9 @@ void MyGL::RaytraceScene()
         {
             //TODO
             Ray r = scene.camera.Raycast(i, j);
-            Intersection inter = intersection_engine.GetIntersection(r);
-            float x = abs(inter.normal[0]); float y = abs(inter.normal[1]); float z = abs(inter.normal[2]);
-            scene.film.pixels[i][j] = glm::vec3(x,y,z);
+            scene.film.pixels[i][j] = integrator.TraceRay(r, 1);
+            //Intersection inter = intersection_engine.GetIntersection(r);
+            //scene.film.pixels[i][j] = glm::abs(inter.normal);
         }
     }
     scene.film.WriteImage(filepath);

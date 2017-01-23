@@ -10,7 +10,7 @@ Intersection SquarePlane::GetIntersection(Ray r)
     glm::vec3 tp = tr.origin + t * tr.direction;
     if (tp.r > -0.5 && tp.r < 0.5 && tp.g > -0.5 && tp.g < 0.5) {
         inter.point = r.origin + t * r.direction;
-        inter.normal = N;
+        inter.normal = glm::normalize((glm::vec3(transform.invTransT() * glm::vec4(N,0.f))));
         inter.t = t;
         inter.object_hit = this;
     }

@@ -16,6 +16,7 @@ class Integrator
 public:
     Integrator();
     Integrator(Scene *s);
+    bool isShadowed(Ray r);
     glm::vec3 TraceRay(Ray r, unsigned int depth);
     void SetDepth(unsigned int depth);
 
