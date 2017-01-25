@@ -1,4 +1,5 @@
 #include <raytracing/integrator.h>
+#include <iostream>
 
 
 Integrator::Integrator():
@@ -26,11 +27,12 @@ glm::vec3 Integrator::TraceRay(Ray r, unsigned int depth)
             glm::vec3 d = glm::normalize(light->transform.position() - o);
             Ray light_r = Ray(o,d);
             if (!isShadowed(light_r)) {
-                color += inter.object_hit->material->EvaluateReflectedEnergy(inter, glm::normalize(r.direction), d);
+                color += light->material->base_color * inter.object_hit->material->EvaluateReflectedEnergy(inter, glm::normalize(r.direction), d);
                 num++;
             }
 
         }
+
         color = color / float (num);
     }
     return color;
